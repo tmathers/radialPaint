@@ -5,11 +5,11 @@
   <meta charset="utf-8">
   <style>
     body {
-      background-color: black;
+      background-color: grey;
     }
     
     canvas {
-      position: absolute;
+
       margin: auto;
       left: 0;
       right: 0;
@@ -23,8 +23,21 @@
 
 <body>
   <script src="js/editor.js"></script>
-  <canvas id="canvas"></canvas>
+  
+  <div>
+    <canvas id="canvas"></canvas>
+  </div>
 
+  <div>
+    <label for="points">Points:</label><input type="number" id="points" default="6"/>
+    <label for="reflect">Reflect:</label><input type="checkbox" id="reflect" />
+    <div>
+      <input name="draw-mode" type="radio" id="line" /><label for="line">Line</label>
+      <input name="draw-mode" type="radio" id="pen" /><label for="pen">Pen</label>
+    </div>
+
+    <label for="color">Color:</label><input type="color" id="color" />
+  </div>
 </body>
 
 </html>
