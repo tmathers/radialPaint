@@ -94,63 +94,58 @@ function drawMode() {
 }
 
 
-function onmousedown(e) {
-  if (hasLoaded && e.button === 0) {
+function startDraw(x, y) {
+  if (drawMode() == 'line') {
+    if (!isDrawing) {
+      startX = x - bounds.left;
+      startY = y - bounds.top;
 
-    if (drawMode() == 'line') {
-      if (!isDrawing) {
-        startX = e.clientX - bounds.left;
-        startY = e.clientY - bounds.top;
-
-        isDrawing = true;
-      }
+      isDrawing = true;
     }
   }
   mouseDown = true;
 
   if (drawMode() == 'pen') {
-    findxy('down', e);
+    findxy('down', x, y);
   }
 
   draw();
 }
 
-function onmouseup(e) {
-  if (hasLoaded && e.button === 0) {
-    if (isDrawing) {
+function endDraw(x, y) {
+  if (isDrawing) {
 
-      var path = {points: []};
-      path.points.push({
-        x: startX,
-        y: startY
-      });
-      path.points.push({
-    
-        x: mouseX,
-        y: mouseY
-      });
+    var path = {points: []};
+    path.points.push({
+      x: startX,
+      y: startY
+    });
+    path.points.push({
+  
+      x: mouseX,
+      y: mouseY
+    });
 
-      path.color = document.getElementById('color').value;
-      path.reflect = reflect;
-      path.numAxii = numPoints;
+    path.color = document.getElementById('color').value;
+    path.reflect = reflect;
+    path.numAxii = numPoints;
 
-      paths.push(path);
-      isDrawing = false;
-    }
-
-    draw();
+    paths.push(path);
+    isDrawing = false;
   }
+
+  draw();
   mouseDown = false;
 
   if (drawMode() == 'pen') {
-    findxy('up', e);
+    findxy('up', x, y);
   }
 }
 
-function onmousemove(e) {
+function movePen(x, y) {
   if (hasLoaded) {
-    mouseX = e.clientX - bounds.left;
-    mouseY = e.clientY - bounds.top;
+    mouseX = x - bounds.left;
+    mouseY = y - bounds.top;
 
 
     if (drawMode() == 'line' && isDrawing) {
@@ -158,7 +153,7 @@ function onmousemove(e) {
     }
 
     if (drawMode() == 'pen') {
-      findxy('move', e);
+      findxy('move', x, y);
       draw();
     }
   }
@@ -216,13 +211,13 @@ function drawPenPath(path, reflect = false) {
 }
 
 
-function findxy(res, e) {
+function findxy(res, x, y) {
   if (res == 'down') {
       paths.push({points:[], color: document.getElementById('color').value});
       prevX = currX;
       prevY = currY;
-      currX = e.clientX - canvas.offsetLeft;
-      currY = e.clientY - canvas.offsetTop;
+      currX = x - canvas.offsetLeft;
+      currY = y - canvas.offsetTop;
 
       flag = true;
       ctx.beginPath();
@@ -237,8 +232,8 @@ function findxy(res, e) {
       if (flag) {
           prevX = currX;
           prevY = currY;
-          currX = e.clientX - canvas.offsetLeft;
-          currY = e.clientY - canvas.offsetTop;
+          currX = x - canvas.offsetLeft;
+          currY = y - canvas.offsetTop;
           mark();
       }
   }
@@ -248,9 +243,32 @@ window.onload = function() {
   canvas = document.getElementById("canvas");
   canvas.width = canvasWidth;
   canvas.height = canvasHeight;
-  canvas.onmousedown = onmousedown;
-  canvas.onmouseup = onmouseup;
-  canvas.onmousemove = onmousemove;
+  canvas.onmousedown = function(e) {
+    if (hasLoaded && e.button === 0) {
+      startDraw(e.clientX, e.clientY);
+    }
+  };
+  canvas.onmouseup = function(e) {
+    if (hasLoaded && e.button === 0) {
+      endDraw(e.clientX, e.clientY);
+    }
+  };
+  canvas.onmousemove = function(e) {
+    movePen(e.clientX, e.clientY);
+  };
+
+  canvas.touchstart = function(e) {    
+    const touch = changedTouches[0];
+    startDraw(touch[0].pageX, touch[0].pageY);
+  };
+  canvas.touchend = function(e) {    
+    const touch = changedTouches[0];
+    endDraw(touch[0].pageX, touch[0].pageY);
+  };
+  canvas.touchmove = function(e) {    
+    const touch = changedTouches[0];
+    movePen(touch[0].pageX, touch[0].pageY);
+  };;
 
   canvas.addEventListener("mouseout", function (e) {
     findxy('out', e)
