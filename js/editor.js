@@ -258,9 +258,7 @@ window.onload = function() {
   };
 
   canvas.addEventListener("touchstart", function(e) { 
-    console.log("touchstart = ", e); 
     const touch = e.changedTouches[0];
-    console.log(touch)
     startDraw(touch.pageX, touch.pageY);
   });
   canvas.addEventListener("touchend", function(e) { 
