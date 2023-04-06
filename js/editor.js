@@ -257,18 +257,20 @@ window.onload = function() {
     movePen(e.clientX, e.clientY);
   };
 
-  canvas.touchstart = function(e) {    
-    const touch = changedTouches[0];
-    startDraw(touch[0].pageX, touch[0].pageY);
-  };
-  canvas.touchend = function(e) {    
-    const touch = changedTouches[0];
-    endDraw(touch[0].pageX, touch[0].pageY);
-  };
-  canvas.touchmove = function(e) {    
-    const touch = changedTouches[0];
-    movePen(touch[0].pageX, touch[0].pageY);
-  };;
+  canvas.addEventListener("touchstart", function(e) { 
+    console.log("touchstart = ", e); 
+    const touch = e.changedTouches[0];
+    console.log(touch)
+    startDraw(touch.pageX, touch.pageY);
+  });
+  canvas.addEventListener("touchend", function(e) { 
+    const touch = e.changedTouches[0];
+    endDraw(touch.pageX, touch.pageY);
+  });
+  canvas.addEventListener("touchmove", function(e) {  
+    const touch = e.changedTouches[0];
+    movePen(touch.pageX, touch.pageY);
+  });
 
   canvas.addEventListener("mouseout", function (e) {
     findxy('out', e)
