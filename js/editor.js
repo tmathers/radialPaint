@@ -1,5 +1,5 @@
-var canvasWidth = 500;
-var canvasHeight = 500;
+var canvasWidth = getCanvasSize();
+var canvasHeight = getCanvasSize();
 var canvas = null;
 var bounds = null;
 var ctx = null;
@@ -293,4 +293,8 @@ window.onload = function() {
   hasLoaded = true;
 
   draw();
+}
+
+function getCanvasSize() {
+  return window.innerWidth < window.innerHeight ? window.innerWidth : window.innerHeight;
 }
