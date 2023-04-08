@@ -323,7 +323,7 @@ function setCanvasSize() {
     
     //- getTotalWidth(controls)
     - 2; //border
-  const height = window.outerHeight
+  const height = window.screen.height
     - navbar.clientHeight
     - getAdditionalHeight(navbar)
     - getAdditionalWidth(viewport)
