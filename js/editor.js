@@ -1,5 +1,5 @@
-var canvasWidth = getCanvasSize();
-var canvasHeight = getCanvasSize();
+var canvasWidth = 0;
+var canvasHeight = 0;
 var canvas = null;
 var bounds = null;
 var ctx = null;
@@ -241,8 +241,12 @@ function findxy(res, x, y) {
 
 window.onload = function() {
   canvas = document.getElementById("canvas");
+  setCanvasSize();
+  //canvasWidth = getCanvasSize();
+  //canvasHeight = getCanvasSize();
   canvas.width = canvasWidth;
   canvas.height = canvasHeight;
+
   canvas.onmousedown = function(e) {
     if (hasLoaded && e.button === 0) {
       startDraw(e.clientX, e.clientY);
@@ -288,6 +292,15 @@ window.onload = function() {
     reflect = e.target.checked;
   }
 
+  document.getElementById('clear').onclick = function(e) {
+    paths = [];
+    draw();
+  }
+  document.getElementById('undo').onclick = function(e) {
+    paths.pop();
+    draw();
+  }
+
   bounds = canvas.getBoundingClientRect();
   ctx = canvas.getContext("2d");
   hasLoaded = true;
@@ -295,6 +308,30 @@ window.onload = function() {
   draw();
 }
 
-function getCanvasSize() {
-  return window.innerWidth < window.innerHeight ? window.innerWidth : window.innerHeight;
+function setCanvasSize() {
+
+  const viewport = document.getElementById('viewport');
+  const navbar = document.getElementById('navbar');
+  const canvas = document.getElementById('canvas');
+  const width = viewport.clientWidth 
+    - parseInt(getComputedStyle(viewport).getPropertyValue('padding-left')) 
+    - parseInt(getComputedStyle(viewport).getPropertyValue('padding-right')) 
+    - parseInt(getComputedStyle(viewport).getPropertyValue('margin-left')) 
+    - parseInt(getComputedStyle(viewport).getPropertyValue('margin-right'))
+    - 2; //border
+  const height = window.innerHeight
+    - navbar.clientHeight
+    - parseInt(getComputedStyle(navbar).getPropertyValue('padding-top')) 
+    - parseInt(getComputedStyle(navbar).getPropertyValue('padding-bottom')) 
+    - parseInt(getComputedStyle(navbar).getPropertyValue('margin-top')) 
+    - parseInt(getComputedStyle(navbar).getPropertyValue('margin-bottom'))
+    - parseInt(getComputedStyle(viewport).getPropertyValue('padding-top')) 
+    - parseInt(getComputedStyle(viewport).getPropertyValue('padding-bottom')) 
+    - parseInt(getComputedStyle(viewport).getPropertyValue('margin-top')) 
+    - parseInt(getComputedStyle(viewport).getPropertyValue('margin-bottom'))
+    - 2; //border
+
+  canvasHeight = width < height ? width : height;;
+  canvasWidth = width < height ? width : height;;
+  //return width < height ? width : height;
 }
