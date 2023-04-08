@@ -344,7 +344,7 @@ function setCanvasSize() {
   if (viewWidth <  viewHeight) {
     console.log("portrait")
 
-    canvasHeight = height - innerControls.clientHeight - getAdditionalHeight(innerControls);
+    canvasHeight = height - innerControls.clientHeight - getAdditionalHeight(innerControls) - margin - 6;
     canvasWidth = width - getAdditionalWidth(viewport);
 
     controls.style.minWidth = "100%";
@@ -366,7 +366,9 @@ function getAdditionalWidth(el) {
   return parseInt(getComputedStyle(el).getPropertyValue('padding-left')) 
     + parseInt(getComputedStyle(el).getPropertyValue('padding-right')) 
     + parseInt(getComputedStyle(el).getPropertyValue('margin-left')) 
-    + parseInt(getComputedStyle(el).getPropertyValue('margin-right'));
+    + parseInt(getComputedStyle(el).getPropertyValue('margin-right'))
+    + parseInt(getComputedStyle(el).getPropertyValue('border-left-width'))
+    + parseInt(getComputedStyle(el).getPropertyValue('border-right-width'));
 
 }
 
@@ -374,6 +376,8 @@ function getAdditionalHeight(el) {
   return parseInt(getComputedStyle(el).getPropertyValue('padding-top')) 
     + parseInt(getComputedStyle(el).getPropertyValue('padding-bottom')) 
     + parseInt(getComputedStyle(el).getPropertyValue('margin-top')) 
-    + parseInt(getComputedStyle(el).getPropertyValue('margin-bottom'));
+    + parseInt(getComputedStyle(el).getPropertyValue('margin-bottom'))
+    + parseInt(getComputedStyle(el).getPropertyValue('border-top-width'))
+    + parseInt(getComputedStyle(el).getPropertyValue('border-bottom-width'));
 
 }
