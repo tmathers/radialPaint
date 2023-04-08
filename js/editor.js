@@ -18,15 +18,17 @@ const PI = 3.14159;
 var numPoints = 6;
 var reflect = true;
 var lineWidth = 2;
+var bgColor = "#000";
+var color = "#fff";
 
 
 var mouseDown = false;
 
 function draw() {
 
-  ctx.fillStyle = "#fff";
+  ctx.fillStyle = bgColor;
   ctx.fillRect(0, 0, canvasWidth, canvasHeight);
-  ctx.strokeStyle = "black";
+  ctx.strokeStyle = color
   ctx.lineWidth = lineWidth;
 
   // mark center point
@@ -44,7 +46,7 @@ function draw() {
 
 
     if (isDrawing) {
-      ctx.strokeStyle = color;
+      ctx.strokeStyle = document.getElementById('color').value;
       ctx.lineWidth = lineWidth;
       ctx.beginPath();
       ctx.moveTo(startX, startY);
@@ -242,8 +244,6 @@ function findxy(res, x, y) {
 window.onload = function() {
   canvas = document.getElementById("canvas");
   setCanvasSize();
-  //canvasWidth = getCanvasSize();
-  //canvasHeight = getCanvasSize();
   canvas.width = canvasWidth;
   canvas.height = canvasHeight;
 
@@ -283,7 +283,7 @@ window.onload = function() {
   document.getElementById('points').value = numPoints;
   document.getElementById('reflect').checked = reflect;
   document.getElementById('line').checked = true;
-  document.getElementById('color').value = color
+  console.log(color)
 
   document.getElementById('points').onchange = function(e) {
     numPoints = e.target.value;
@@ -313,25 +313,67 @@ function setCanvasSize() {
   const viewport = document.getElementById('viewport');
   const navbar = document.getElementById('navbar');
   const canvas = document.getElementById('canvas');
+
+  const controls = document.getElementById('controls');
+  const innerControls = document.getElementById('inner-controls');
+
+  
+
   const width = viewport.clientWidth 
-    - parseInt(getComputedStyle(viewport).getPropertyValue('padding-left')) 
-    - parseInt(getComputedStyle(viewport).getPropertyValue('padding-right')) 
-    - parseInt(getComputedStyle(viewport).getPropertyValue('margin-left')) 
-    - parseInt(getComputedStyle(viewport).getPropertyValue('margin-right'))
+    
+    //- getTotalWidth(controls)
     - 2; //border
   const height = window.innerHeight
     - navbar.clientHeight
-    - parseInt(getComputedStyle(navbar).getPropertyValue('padding-top')) 
-    - parseInt(getComputedStyle(navbar).getPropertyValue('padding-bottom')) 
-    - parseInt(getComputedStyle(navbar).getPropertyValue('margin-top')) 
-    - parseInt(getComputedStyle(navbar).getPropertyValue('margin-bottom'))
-    - parseInt(getComputedStyle(viewport).getPropertyValue('padding-top')) 
-    - parseInt(getComputedStyle(viewport).getPropertyValue('padding-bottom')) 
-    - parseInt(getComputedStyle(viewport).getPropertyValue('margin-top')) 
-    - parseInt(getComputedStyle(viewport).getPropertyValue('margin-bottom'))
+    - getAdditionalHeight(navbar)
+    - getAdditionalWidth(viewport)
     - 2; //border
 
-  canvasHeight = width < height ? width : height;;
-  canvasWidth = width < height ? width : height;;
+  const margin = parseInt(getComputedStyle(viewport).getPropertyValue('padding-right'));
+
+
+  console.log(viewport.clientWidth)
+  console.log(viewport.clientHeight)
+  console.log("margin=" + margin)
+
+  const viewWidth = window.innerWidth - getAdditionalWidth(navbar);
+  const viewHeight = window.innerHeight;
+
+  
+  // portrait
+  if (viewWidth <  viewHeight) {
+    console.log("portrait")
+
+    canvasHeight = height - innerControls.clientHeight - getAdditionalHeight(innerControls);
+    canvasWidth = width - getAdditionalWidth(viewport);
+
+    controls.style.minWidth = "100%";
+    controls.classList.add("mt-3");
+    
+  // Landscape
+  } else {
+    console.log("land")
+    canvasHeight = height;
+    canvasWidth = width - controls.clientWidth - getAdditionalWidth(controls) - margin - 2;
+    controls.classList.add("ms-3");
+  }
+
+
   //return width < height ? width : height;
+}
+
+function getAdditionalWidth(el) {
+  return parseInt(getComputedStyle(el).getPropertyValue('padding-left')) 
+    + parseInt(getComputedStyle(el).getPropertyValue('padding-right')) 
+    + parseInt(getComputedStyle(el).getPropertyValue('margin-left')) 
+    + parseInt(getComputedStyle(el).getPropertyValue('margin-right'));
+
+}
+
+function getAdditionalHeight(el) {
+  return parseInt(getComputedStyle(el).getPropertyValue('padding-top')) 
+    + parseInt(getComputedStyle(el).getPropertyValue('padding-bottom')) 
+    + parseInt(getComputedStyle(el).getPropertyValue('margin-top')) 
+    + parseInt(getComputedStyle(el).getPropertyValue('margin-bottom'));
+
 }
