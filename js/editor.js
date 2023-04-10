@@ -323,7 +323,7 @@ function setCanvasSize() {
     
     //- getTotalWidth(controls)
     - 2; //border
-  const height = window.screen.height
+  const height = window.innerHeight
     - navbar.clientHeight
     - getAdditionalHeight(navbar)
     - getAdditionalWidth(viewport)
@@ -331,20 +331,13 @@ function setCanvasSize() {
 
   const margin = parseInt(getComputedStyle(viewport).getPropertyValue('padding-right'));
 
-
-  console.log(viewport.clientWidth)
-  console.log(viewport.clientHeight)
-  console.log("margin=" + margin)
-
   const viewWidth = window.innerWidth - getAdditionalWidth(navbar);
   const viewHeight = window.innerHeight;
 
   
   // portrait
   if (viewWidth <  viewHeight) {
-    console.log("portrait")
-
-    canvasHeight = height - innerControls.clientHeight - getAdditionalHeight(innerControls) - margin - 6;
+    canvasHeight = height - innerControls.clientHeight - getAdditionalHeight(innerControls) - margin;
     canvasWidth = width - getAdditionalWidth(viewport);
 
     controls.style.minWidth = "100%";
