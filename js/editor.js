@@ -280,11 +280,6 @@ window.onload = function() {
   
   document.addEventListener("keypress", onKeypress);
 
-  document.getElementById('points').value = numPoints;
-  document.getElementById('reflect').checked = reflect;
-  document.getElementById('line').checked = true;
-  console.log(color)
-
   document.getElementById('points').onchange = function(e) {
     numPoints = e.target.value;
   }
@@ -300,6 +295,15 @@ window.onload = function() {
     paths.pop();
     draw();
   }
+  document.getElementById('bg-color').onchange = (e) => {
+    bgColor = e.target.value;
+    draw();
+  }
+
+  document.getElementById('points').value = numPoints;
+  document.getElementById('reflect').checked = reflect;
+  document.getElementById('line').checked = true;
+  document.getElementById('bg-color').value = bgColor;
 
   bounds = canvas.getBoundingClientRect();
   ctx = canvas.getContext("2d");
@@ -341,7 +345,8 @@ function setCanvasSize() {
     canvasWidth = width - getAdditionalWidth(viewport);
 
     controls.style.minWidth = "100%";
-    controls.classList.add("mt-3");
+    controls.classList.add("mt-2");
+    controls.classList.add("mt-sm-3");
     
   // Landscape
   } else {
