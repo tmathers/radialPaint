@@ -110,7 +110,15 @@ function startDraw(x, y) {
   mouseDown = true;
 
   if (drawMode() == 'pen') {
-    findxy('down');
+    let path = new Path2D();
+    path.moveTo(mouseX, mouseY);
+    paths.push({points:[], color: document.getElementById('color').value, path: path});
+
+    if (reflect) {
+      let reflectedPath = new Path2D();
+      reflectedPath.moveTo(canvasWidth - mouseX, mouseY);
+      paths[paths.length - 1]['reflectedPath'] = reflectedPath;
+    }
   }
 
   draw();
@@ -140,10 +148,6 @@ function endDraw(x, y) {
 
   draw();
   mouseDown = false;
-
-  if (drawMode() == 'pen') {
-    findxy('up');
-  }
 }
 
 function movePen(x, y) {
@@ -151,13 +155,12 @@ function movePen(x, y) {
     mouseX = x - bounds.left;
     mouseY = y - bounds.top;
 
-
     if (drawMode() == 'line' && isDrawing) {
       draw();
     }
 
-    if (drawMode() == 'pen') {
-      findxy('move');
+    if (drawMode() == 'pen' && mouseDown) {
+      mark();
       draw();
     }
   }
@@ -172,8 +175,6 @@ function onKeypress(e) {
   }
 
 }
-
-flag = false;
 
 
 function mark() {
@@ -199,31 +200,6 @@ function drawPenPath(path, reflect = false) {
   if ('reflectedPath' in path) {
     ctx.beginPath();
     ctx.stroke(path.reflectedPath);
-  }
-}
-
-
-function findxy(res) {
-  if (res == 'down') {
-      let path = new Path2D();
-      path.moveTo(mouseX, mouseY);
-      paths.push({points:[], color: document.getElementById('color').value, path: path});
-
-      if (reflect) {
-        let reflectedPath = new Path2D();
-        reflectedPath.moveTo(canvasWidth - mouseX, mouseY);
-        paths[paths.length - 1]['reflectedPath'] = reflectedPath;
-      }
-
-      flag = true;
-  }
-  if (res == 'up' || res == "out") {
-      flag = false;
-  }
-  if (res == 'move') {
-      if (flag) {
-          mark();
-      }
   }
 }
 
@@ -261,7 +237,7 @@ window.onload = function() {
   });
 
   canvas.addEventListener("mouseout", function (e) {
-    findxy('out', e)
+    mouseDown = false;
   }, false);
   
   document.addEventListener("keypress", onKeypress);
