@@ -75,16 +75,8 @@ function draw() {
       ctx.translate( canvasWidth / 2, canvasHeight / 2 );
       ctx.rotate(ROTATE2 * j);
       ctx.translate( -canvasWidth / 2, -canvasHeight / 2 );
-  
-      ctx.beginPath();
 
       drawPenPath(path);
-      
-      if (path.reflect) {
-        drawPenPath(path, true);
-      }
-  
-      ctx.stroke();
 
       // Reset transformation matrix
       ctx.setTransform(1, 0, 0, 1, 0, 0);
