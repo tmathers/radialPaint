@@ -21,6 +21,8 @@ var lineWidth = 2;
 var bgColor = "#000";
 var color = "#fff";
 
+var currentPath = new Path2D();
+
 
 var mouseDown = false;
 
@@ -108,7 +110,7 @@ function startDraw(x, y) {
   mouseDown = true;
 
   if (drawMode() == 'pen') {
-    findxy('down', x, y);
+    findxy('down');
   }
 
   draw();
@@ -117,20 +119,20 @@ function startDraw(x, y) {
 function endDraw(x, y) {
   if (isDrawing) {
 
-    var path = {points: []};
-    path.points.push({
-      x: startX,
-      y: startY
-    });
-    path.points.push({
-  
-      x: mouseX,
-      y: mouseY
-    });
-
+    var path = {};
     path.color = document.getElementById('color').value;
     path.reflect = reflect;
     path.numAxii = numPoints;
+
+    path.path = new Path2D();
+    path.path.moveTo(startX, startY);
+    path.path.lineTo(mouseX, mouseY);
+
+    if (reflect) {
+      path.reflectedPath = new Path2D();
+      path.reflectedPath.moveTo(canvasWidth - startX, startY);
+      path.reflectedPath.lineTo(canvasWidth - mouseX, mouseY);
+    }
 
     paths.push(path);
     isDrawing = false;
@@ -140,7 +142,7 @@ function endDraw(x, y) {
   mouseDown = false;
 
   if (drawMode() == 'pen') {
-    findxy('up', x, y);
+    findxy('up');
   }
 }
 
@@ -155,7 +157,7 @@ function movePen(x, y) {
     }
 
     if (drawMode() == 'pen') {
-      findxy('move', x, y);
+      findxy('move');
       draw();
     }
   }
@@ -171,20 +173,18 @@ function onKeypress(e) {
 
 }
 
-flag = false,
-prevX = 0,
-currX = 0,
-prevY = 0,
-currY = 0;
+flag = false;
 
 
 function mark() {
+
   var currentPenPath = paths[paths.length - 1];
-  currentPenPath.points.push({
-    
-    x: currX,
-    y: currY
-  });
+
+  currentPenPath.path.lineTo(mouseX, mouseY);
+
+  if (reflect) {
+    currentPenPath.reflectedPath.lineTo(canvasWidth - mouseX, mouseY);
+  }
 
   currentPenPath.reflect = reflect;
   currentPenPath.numAxii = numPoints;
@@ -192,50 +192,36 @@ function mark() {
 
 function drawPenPath(path, reflect = false) {
   ctx.beginPath();
-
-  for (i in path.points) {
-    p = path.points[i];
-
-    const x = reflect ? -p.x + canvasWidth : p.x;
-    const y = p.y
-
-    if (i == 0) {
-      ctx.moveTo(x, y);
-    } else {
-      ctx.lineTo(x, y);
-    }
-
-  }
   ctx.strokeStyle = path.color;
   ctx.lineWidth = lineWidth;
-  ctx.stroke();
+  ctx.stroke(path.path);
 
+  if ('reflectedPath' in path) {
+    ctx.beginPath();
+    ctx.stroke(path.reflectedPath);
+  }
 }
 
 
-function findxy(res, x, y) {
+function findxy(res) {
   if (res == 'down') {
-      paths.push({points:[], color: document.getElementById('color').value});
-      prevX = currX;
-      prevY = currY;
-      currX = x - canvas.offsetLeft;
-      currY = y - canvas.offsetTop;
+      let path = new Path2D();
+      path.moveTo(mouseX, mouseY);
+      paths.push({points:[], color: document.getElementById('color').value, path: path});
+
+      if (reflect) {
+        let reflectedPath = new Path2D();
+        reflectedPath.moveTo(canvasWidth - mouseX, mouseY);
+        paths[paths.length - 1]['reflectedPath'] = reflectedPath;
+      }
 
       flag = true;
-      ctx.beginPath();
-      ctx.fillStyle = document.getElementById('color').value;
-      ctx.fillRect(currX, currY, 2, 2);
-      ctx.closePath();
   }
   if (res == 'up' || res == "out") {
       flag = false;
   }
   if (res == 'move') {
       if (flag) {
-          prevX = currX;
-          prevY = currY;
-          currX = x - canvas.offsetLeft;
-          currY = y - canvas.offsetTop;
           mark();
       }
   }
